@@ -5,11 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#999999"
+    android:background="#333333"
     android:orientation="vertical"
     >
 
-    <com.caohai.fengyeprogressview.ProgressFengYeView
+    <com.caohai.fengyeprogressview.NewProgressView
+        android:id="@+id/progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />

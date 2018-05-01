@@ -23,6 +23,7 @@ import android.view.View;
  */
 
 public class ProgressFengYeView extends View {
+    private Context context;
     private Paint mPaint;
     private int defaultWidth, width, fWidth, fCenterX, left;
     private int defaultHeight, height, fHeight, fCenterY;
@@ -37,29 +38,31 @@ public class ProgressFengYeView extends View {
     private int speed, progress;
     private int maxProgress;
     private int yPointX, yPointY;
-
+    private YeZi mYeZi;
+    private YeZi mYeZi1;
     public ProgressFengYeView(Context context) {
         super(context);
-        init();
+        init(context);
     }
 
     public ProgressFengYeView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(context);
     }
 
     public ProgressFengYeView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        init(context);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public ProgressFengYeView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init();
+        init(context);
     }
 
-    private void init() {
+    private void init(Context mContext) {
+        this.context=context;
         rotate = 0;
         speed = 10;
         progress = 0;
@@ -141,20 +144,26 @@ public class ProgressFengYeView extends View {
         int yHeight = yBitmap.getHeight() * 2;
         yR = new Rect(0, 0, yWidth, yHeight);
 //        ycR=new Rect()
+       mYeZi= new YeZi(context,yBitmap,yPointX,yPointY,left,speed,defaultHeight,mPaint);
+       mYeZi1= new YeZi(context,yBitmap,yPointX+defaultHeight/4,yPointY+5,left,speed,defaultHeight,mPaint);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+//        canvas.save();
+//        canvas.rotate(rotate, yPointX, yPointY + (float) Math.sin(yPointX * 3.14 / 180) * defaultHeight / 4);
+//        canvas.drawBitmap(yBitmap, yPointX, yPointY + (float) Math.sin(yPointX * 3.14 / 180) * defaultHeight / 4, mPaint);
+//        canvas.restore();
         canvas.save();
-        canvas.rotate(rotate, yPointX, yPointY + (float) Math.sin(yPointX * 3.14 / 180) * defaultHeight / 4);
-        canvas.drawBitmap(yBitmap, yPointX, yPointY + (float) Math.sin(yPointX * 3.14 / 180) * defaultHeight / 4, mPaint);
+        mYeZi.onDrawYeZi(canvas);
+        mYeZi1.onDrawYeZi(canvas);
         canvas.restore();
-        mPaint.setColor(Color.BLUE);
+        mPaint.setColor(Color.parseColor("#aa0000"));
         mPaint.setStyle(Paint.Style.FILL);
-        mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OUT));
+        mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         progressR.right = progress;
-        canvas.drawRect(progressR, mPaint);
+       canvas.drawRect(progressR, mPaint);
         mPaint.setXfermode(null);
         canvas.drawBitmap(kBitamp, kR, cR, mPaint);
         drawFengShan(canvas);
@@ -175,6 +184,8 @@ public class ProgressFengYeView extends View {
                         rotate += speed;
                         progress += 1;
                         yPointX -= speed;
+                        mYeZi.moveYeZi();
+                        mYeZi1.moveYeZi();
                         if (rotate >= 360) {
                             rotate = 0;
                         }
