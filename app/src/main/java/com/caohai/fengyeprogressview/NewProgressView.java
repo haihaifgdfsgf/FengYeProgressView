@@ -20,12 +20,12 @@ import java.util.List;
 
 public class NewProgressView extends View {
     //风扇旋转的角度比，越大越快
-    private static final int FAN_ROTATE_THAN_VALUE=5000;
+    private static final int FAN_ROTATE_THAN_VALUE = 5000;
     //当风扇速度变化太小，int之后为零时的默认速度
-    private static final int FAN_ROTATE_DEFAULT_SPEED=10;
+    private static final int FAN_ROTATE_DEFAULT_SPEED = 10;
 
     //内容实际宽高
-    private int contentWidth,contentHeight;
+    private int contentWidth, contentHeight;
     //内容最左边的横坐标
     private int left;
     //边框bitmap
@@ -74,6 +74,7 @@ public class NewProgressView extends View {
     private RectF progressRect;
     private List<NewYeZi> yeZis;
     private Bitmap leafBt;
+
     public NewProgressView(Context context) {
         super(context);
         init();
@@ -96,56 +97,58 @@ public class NewProgressView extends View {
     }
 
     private void init() {
-        mPaint=new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setStyle(Paint.Style.STROKE);
-        progressPaint=new Paint(Paint.ANTI_ALIAS_FLAG);
+        progressPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         progressPaint.setStyle(Paint.Style.FILL);
         progressPaint.setColor(Color.RED);
 
-        fanRotateAngle=0;
-        currentProgress=0f;
-        lastProgress=0f;
-        progressLength=0f;
+        fanRotateAngle = 0;
+        currentProgress = 0f;
+        lastProgress = 0f;
+        progressLength = 0f;
 
         borderBt = BitmapFactory.decodeResource(getResources(), R.mipmap.leaf_kuang);
         //扩大两倍绘制（图片太小）
-        contentWidth=borderBt.getWidth()*2;
-        contentHeight=borderBt.getHeight()*2;
-        arcRadius=contentHeight/2;
+        contentWidth = borderBt.getWidth() * 2;
+        contentHeight = borderBt.getHeight() * 2;
+        arcRadius = contentHeight / 2;
 
 
-        fanBt=BitmapFactory.decodeResource(getResources(),R.mipmap.fengshan);
-        fanWidth=fanBt.getWidth()*2;
-        fanHeigh=fanBt.getHeight()*2;
+        fanBt = BitmapFactory.decodeResource(getResources(), R.mipmap.fengshan);
+        fanWidth = fanBt.getWidth() * 2;
+        fanHeigh = fanBt.getHeight() * 2;
 
 
-        leafBt=BitmapFactory.decodeResource(getResources(),R.mipmap.leaf);
-        yeZis=new ArrayList<>();
+        leafBt = BitmapFactory.decodeResource(getResources(), R.mipmap.leaf);
+        yeZis = new ArrayList<>();
     }
 
     /**
      * 外部调用，设置进度值
+     *
      * @param progress
      */
-    public void setProgress(float progress){
-        currentProgress=progress;
-        fanRotateSpeed= (int) ((currentProgress-lastProgress)*FAN_ROTATE_THAN_VALUE);
+    public void setProgress(float progress) {
+        currentProgress = progress;
+        fanRotateSpeed = (int) ((currentProgress - lastProgress) * FAN_ROTATE_THAN_VALUE);
         //当速度为零时默认为10
-        fanRotateSpeed=fanRotateSpeed==0?FAN_ROTATE_DEFAULT_SPEED:fanRotateSpeed;
-        fanRotateAngle+=fanRotateSpeed;
-        fanRotateAngle=fanRotateAngle>=360?0:fanRotateAngle;
-        lastProgress=currentProgress;
+        fanRotateSpeed = fanRotateSpeed == 0 ? FAN_ROTATE_DEFAULT_SPEED : fanRotateSpeed;
+        fanRotateAngle += fanRotateSpeed;
+        fanRotateAngle = fanRotateAngle >= 360 ? 0 : fanRotateAngle;
+        lastProgress = currentProgress;
 
 
-        progressLength=totalLength*currentProgress;
-        if (progressLength<=arcRadius){
+        progressLength = totalLength * currentProgress;
+        if (progressLength <= arcRadius) {
             //当前点在圆弧上的高度
-            arcDegree = (int) Math.toDegrees(Math.acos((arcRadius - progressLength)/  arcRadius));
-        }else {
-            progressRect.right=left+progressLength;
+            arcDegree = (int) Math.toDegrees(Math.acos((arcRadius - progressLength) / arcRadius));
+        } else {
+            progressRect.right = left + progressLength;
         }
         invalidate();
     }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -174,6 +177,7 @@ public class NewProgressView extends View {
         }
         setMeasuredDimension(widthMeasure, heightMeasure);
     }
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
@@ -184,8 +188,7 @@ public class NewProgressView extends View {
         int top = (h - contentHeight) / 2;
         int right = (w + contentWidth) / 2;
         int bottom = (h + contentHeight) / 2;
-        borderCR=new Rect(left,top,right,bottom);
-
+        borderCR = new Rect(left, top, right, bottom);
 
 
         //风扇参数
@@ -199,38 +202,46 @@ public class NewProgressView extends View {
         fanCR = new Rect(fLeft, fTop, fRight, fBottom);
 
         //弧形的区域
-        arcR=new RectF(left+28,fanCenterY-arcRadius,left+arcRadius*2,fanCenterY+arcRadius);
+        arcR = new RectF(left, fanCenterY - arcRadius, left + arcRadius * 2, fanCenterY + arcRadius);
         //减2时防止分割处没有充满
-        progressRect=new RectF(left+arcRadius-2,fanCenterY+arcRadius,left+arcRadius-2,fanCenterY-arcRadius);
+        progressRect = new RectF(left + arcRadius - 2, fanCenterY - arcRadius, left + arcRadius - 2, fanCenterY + arcRadius);
         //最大值从最左边到风扇中心点
-        totalLength=fanCenterX-left;
+        totalLength = fanCenterX - left;
 
-        for (int i=0;i<8;i++){
-            NewYeZi yeZi=new NewYeZi(leafBt,fanCenterX,fanCenterY,fanCenterX-left-30);
+        for (int i = 0; i < 8; i++) {
+            NewYeZi yeZi = new NewYeZi(leafBt, fanCenterX, fanCenterY, fanCenterX - left - 30);
             yeZis.add(yeZi);
         }
+    }
+
+    public void initView() {
+        progressRect.left = left + arcRadius - 2;
+        progressRect.top = fanCenterY - arcRadius;
+        progressRect.right = left + arcRadius - 2;
+        progressRect.bottom = fanCenterY + arcRadius;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        for (NewYeZi yeZi:yeZis){
+        for (NewYeZi yeZi : yeZis) {
             yeZi.drawLeaf(canvas);
         }
 
-       // drawProgress(canvas);
+        drawProgress(canvas);
 
-        canvas.drawBitmap(borderBt,borderR,borderCR,mPaint);
+        canvas.drawBitmap(borderBt, borderR, borderCR, mPaint);
 
         canvas.save();
         canvas.rotate(fanRotateAngle, fanCenterX, fanCenterY);
-        canvas.drawBitmap(fanBt,fanR,fanCR,mPaint);
+        canvas.drawBitmap(fanBt, fanR, fanCR, mPaint);
         canvas.restore();
 
     }
 
+
     private void drawProgress(Canvas canvas) {
-        canvas.drawArc(arcR,180-arcDegree,arcDegree*2,false,progressPaint);
-        canvas.drawRect(progressRect,progressPaint);
+        canvas.drawArc(arcR, 180 - arcDegree, arcDegree * 2, false, progressPaint);
+        canvas.drawRect(progressRect, progressPaint);
     }
 }
